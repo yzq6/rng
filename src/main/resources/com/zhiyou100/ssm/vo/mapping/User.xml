@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiyou100.ssm.dao.IUserDAO">
+<resultMap type="User" id="UserMap">
+		<id property="userId" column="user_id" />
+		<result property="username" column="username" />
+		<result property="password" column="password" />
+		<result property="isAdmin" column="is_admin" />
+		<result property="isSystem" column="is_system" />
+		<result property="departmentId" column="dept_id" />
+		<result property="roleId" column="role_id" />
+		<result property="isMale" column="is_male" />
+		<result property="mobile" column="mobile" />
+		<result property="address" column="address" />
+		<result property="age" column="age" />
+		<result property="tel" column="tel" />
+		<result property="idNum" column="id_num" />
+		<result property="email" column="email" />
+	
+		<result property="hobby" column="hobby" />
+		<result property="education" column="edu" />
+		<result property="cardNum" column="card_num" />
+		<result property="nation" column="nation" />
+		<result property="marry" column="marry" />
+		<result property="status" column="status" />
+		<result property="remark" column="remark" />
+		<result property="createTime" column="create_time" />
+		<result property="creater" column="creater" />
+		<result property="updateTime" column="update_time" />
+		<result property="updater" column="updater" />	
+	</resultMap>
+	
+	<sql id="sql1">
+	      user_id,username,password,is_admin,is_system,department_id,role_id,is_male,mobile,address,age,tel,id_num,email,qq,hobby,education,card_num,nation,marry,status,remark,create_time,creater,update_time,updater
+	</sql>
+	
+	<sql id="sql2">
+		username,password,is_admin,is_system,dept_id,role_id,is_male,mobile,address,age,tel,id_num,email,hobby,edu,card_num,nation,marry,status,remark,create_time,creater
+	</sql>
+	
+	<sql id="sql3">
+	    username,password,is_admin,is_system,dept_id,role_id,is_male,mobile,address,age,tel,id_num,email,,hobby,education,card_num,nation,marry,status,remark,update_time,updater
+	</sql>
+	
+	<insert id="doCreate" parameterType="User">
+	INSERT INTO user(
+	 username,password,department_id,role_id,is_male,mobile,address,age,tel,id_num,email,qq,hobby,education,card_num,nation,marry,status,remark,create_time,creater
+	) VALUES(
+	#{username}, #{password}, #{departmentId}, #{roleId},#{isMale},#{mobile},#{address},#{age},#{tel},#{idNum},#{email},#{qq},#{hobby},#{education},#{cardNum},#{nation},#{marry},#{status},#{remark},#{createTime},#{creater}
+	)
+	</insert>
+	
+	<delete id="doDelete" parameterType="java.lang.Integer">
+	DELETE FROM user WHERE user_id=#{userId}
+	</delete>
+	
+	<update id="doUpdate" parameterType="User">
+	UPDATE user SET username=#{username},password=#{password},department_id=#{departmentId},role_id=#{roleId},is_male=#{isMale},mobile=#{mobile},address=#{address},age=#{age},tel=#{tel},id_num=#{idNum},email=#{email},hobby=#{hobby},education=#{education},card_num=#{cardNum},nation=#{nation},marry=#{marry},status=#{status},remark=#{remark},update_time=#{updateTime},updater=#{updater}
+	WHERE user_id=#{userId}
+	</update>
+	
+	<select id="findById" parameterType="java.lang.Integer"
+	resultMap="UserMap">
+	SELECT <include refid="sql1"/> FROM user WHERE user_id=#{userId}
+	</select>
+	
+	<select id="findAll" resultMap="UserMap">
+	SELECT <include refid="sql1"/>FROM user
+	</select>
+	
+	<select id="findAllReceiver" resultMap="UserMap">
+		select user_id,username from user
+	</select>
+	
+	<select id="findAllSplit" parameterType="java.util.Map"
+	resultMap="UserMap">
+	SELECT
+	<include refid="sql1"/>
+	FROM user WHERE ${columns} LIKE #{keyword} LIMIT #{start},#{lineSize}
+	
+	</select>
+</mapper>

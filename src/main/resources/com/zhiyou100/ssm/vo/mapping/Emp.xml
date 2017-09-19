@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zhiyou100.ssm.dao.IEmpDAO">
+	<resultMap type="Emp" id="EmpMap">
+		<id property="empno" column="empno" />
+		<result property="deptno" column="deptno" />
+		<result property="ename" column="ename" />
+		<result property="job" column="job" />
+		<result property="sal" column="sal" />
+		<result property="comm" column="comm" />
+		<result property="mgr" column="mgr" />
+		<result property="hiredate" column="hiredate" />
+		<result property="createTime" column="create_time" />
+	</resultMap>
+
+	<sql id="sqls">
+		empno, deptno, ename, job, sal, comm, mgr, hiredate,
+		create_time
+	</sql>
+
+	<insert id="Create" parameterType="com.zhiyou100.ssm.vo.Emp">
+		INSERT INTO
+		emp(empno,deptno,ename,job,sal,comm,mgr,hiredate,create_time)
+		VALUES(#{empno},#{deptno},#{ename},#{job},#{sal},#{comm},#{mgr},#{hiredate},#{createTime})
+	</insert>
+
+	<delete id="doRemove" parameterType="java.lang.Integer">
+		DELETE FROM emp WHERE
+		empno=#{empno}
+	</delete>
+
+	<update id="doUpdate" parameterType="Emp">
+		UPDATE emp SET
+		deptno=#{deptno},ename=#{ename},job=#{job},sal=#{sal},comm=#{comm},mgr=#{mgr},
+		hiredate=#{hiredate},create_time=#{createTime} WHERE empno=#{empno}
+	</update>
+
+	<select id="findById" parameterType="java.lang.Integer"
+		resultType="Emp">
+		SELECT
+		empno,deptno,ename,job,sal,comm,mgr,hiredate,create_time as
+		createTime
+		FROM emp WHERE empno=#{empno}
+	</select>
+
+	<select id="findById2" parameterType="java.lang.Integer"
+		resultMap="EmpMap">
+		SELECT
+		<include refid="sqls" />
+		FROM emp WHERE empno=#{empno}
+	</select>
+
+	<select id="count" resultType="java.lang.Integer">
+		SELECT COUNT(0) FROM emp
+	</select>
+
+	<select id="findAll" resultMap="EmpMap">
+		SELECT
+		<include refid="sqls" />
+		FROM emp
+	</select>
+
+	<select id="findAllSplit" parameterType="java.util.Map"
+		resultMap="EmpMap">
+		SELECT
+		<include refid="sqls" />
+		FROM emp
+		WHERE ${column} LIKE #{keyword} LIMIT #{start},#{lineSize}
+	</select>
+
+	<select id="findAllSplitCount" parameterType="java.util.Map"
+		resultType="java.lang.Long">
+		SELECT COUNT(0) FROM emp
+		WHERE ${column} LIKE #{keyword}
+	</select>
+
+</mapper>
+

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhiyou100.ssm.dao.IMessageDAO">
+	<resultMap type="Message" id="MessageMap">
+		<id property="messageId" column="message_id" />
+		<result property="subject" column="subject" />
+		<result property="content" column="content" />
+		<result property="sender" column="sender" />
+		<result property="saveTime" column="save_time" />
+		<result property="sendTime" column="send_time" /> <!-- 发送时间晚于保存时间 -->
+		<result property="sendDelete" column="send_delete" /><!-- 默认为正常2, 
+			发件箱删除后更新 -->
+		<result property="sendStatus" column="send_status" /> <!-- 0草稿，2已发送 -->
+		<result property="sendUpdateTime" column="send_update_time" /> <!-- 成功/失败... -->
+		<result property="receiver" column="receiver" />
+		<result property="receiveDelete" column="receive_delete" /> <!-- 默认为正常2, 收件人删除后更新 -->
+		<result property="receiveStatus" column="receive_status" /> <!-- 收件人0未读/已读 -->
+		<result property="receiveUpdateTime" column="receive_update_time" /> <!-- 收件人已读时更新 -->
+	</resultMap>
+
+	<sql id="columns">
+		message_id,subject,content,sender,save_time,send_time,send_delete,send_status,send_update_time,receiver,receive_delete,receive_status,receive_update_time
+	</sql>
+	<sql id="messageProps">
+		#{messageId},#{subject},#{content},#{sender},#{saveTime},#{sendTime},#{sendDelete},#{sendStatus},#{sendUpdateTime},#{receiver},#{receiveDelete},#{receiveStatus},#{receiveUpdateTime}
+	</sql>
+	<insert id="doCreate" parameterType="Message">
+		INSERT INTO message(
+		<include refid="columns" />
+		) VALUES(
+		<include refid="messageProps" />
+		)
+	</insert>
+	<delete id="doRemove" parameterType="java.lang.Integer">
+		DELETE FROM message WHERE message_id=#{messageId}
+	</delete>
+
+	<select id="findAll" resultMap="MessageMap">
+		SELECT
+		<include refid="columns" />
+		FROM message
+	</select>
+
+	<select id="findAllReceive" parameterType="java.lang.Integer"
+		resultMap="MessageMap">
+		SELECT
+		<include refid="columns" />
+		FROM message WHERE receiver=#{receiver}
+
+	</select>
+	<select id="findAllReceive1" parameterType="Message" resultMap="MessageMap">
+		SELECT
+		<include refid="columns" />
+		FROM message WHERE receiver=#{receiver} AND
+		receive_delete=#{receiveDelete} AND receive_status=#{receiveStatus}
+
+	</select>
+	<select id="findAllSender" parameterType="java.lang.Integer"
+		resultMap="MessageMap">
+		SELECT
+		<include refid="columns" />
+		FROM message WHERE sender=#{sender}
+
+	</select>
+	<select id="findAlllike" parameterType="java.util.Map" resultMap="MessageMap">
+		SELECT
+		<include refid="columns" />
+		FROM message WHERE ${columns} LIKE #{keyword} AND sender=#{sender} AND send_status=#{sendStatus} AND
+		send_delete=#{sendDelete}
+	</select>
+	<select id="findAlllike1" parameterType="java.util.Map" resultMap="MessageMap">
+		SELECT
+		<include refid="columns" />
+		FROM message WHERE ${columns} LIKE #{keyword} AND receiver=#{receiver} AND
+		receive_delete=#{receiveDelete} AND receive_status=#{receiveStatus}
+
+	</select>
+	
+	<select id="findAllSend" parameterType="Message" resultMap="MessageMap">
+		SELECT
+		<include refid="columns" />
+		FROM message WHERE sender=#{sender} AND send_status=#{sendStatus} AND
+		send_delete=#{sendDelete}
+	</select>
+	<select id="findAllSave" parameterType="Message" resultMap="MessageMap">
+		SELECT
+		<include refid="columns" />
+		FROM message WHERE sender=#{sender} AND send_status=#{sendStatus} AND
+		send_delete=#{sendDelete}
+	</select>
+	<select id="findAllRemove" parameterType="Message" resultMap="MessageMap">
+		SELECT
+		<include refid="columns" />
+		FROM message
+		WHERE (sender=#{sender} AND send_delete=#{sendDelete})
+		OR
+		(receiver=#{receiver} AND receive_delete=#{receiveDelete})
+
+	</select>
+
+	<update id="update" parameterType="Message">
+		UPDATE message SET send_delete=#{sendDelete} WHERE message_id=#{messageId}
+
+	</update>
+
+	<update id="update2" parameterType="Message">
+		UPDATE message SET receive_delete=#{receiveDelete} WHERE
+		message_id=#{messageId}
+
+	</update>
+	
+	
+
+</mapper> 
